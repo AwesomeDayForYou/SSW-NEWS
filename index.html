@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSW News Login with Google</title>
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        /* SSW Colors */
+        :root {
+            --ssw-green: #008000;
+            --ssw-yellow: #FFD700;
+            --text-dark: #333;
+            --text-light: #fff;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .login-container {
+            background-color: var(--text-light);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: var(--ssw-green);
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-size: 2em;
+        }
+
+        .header p {
+            color: var(--text-dark);
+            font-size: 0.9em;
+            font-weight: 300;
+        }
+
+        /* Styling for the divider line */
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 20px 0;
+            color: #aaa;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+        .divider:not(:empty)::before {
+            margin-right: .5em;
+        }
+        .divider:not(:empty)::after {
+            margin-left: .5em;
+        }
+
+        /* --- Custom Email/Password Form (Optional) --- */
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text-dark); font-size: 0.95em; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
+        .login-button { width: 100%; padding: 12px; background-color: var(--ssw-green); color: var(--ssw-yellow); border: none; border-radius: 6px; cursor: pointer; font-size: 1.1em; font-weight: bold; transition: background-color 0.3s; }
+        .login-button:hover { background-color: #006400; }
+        .forgot-password a { color: var(--ssw-green); text-decoration: none; font-size: 0.9em; }
+
+        /* Ensure Google button is centered */
+        #google_button_container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <img src="path/to/school-logo.png" alt="Suansri Wittaya School Logo" class="logo">
+            <h1>SSW News Portal</h1>
+            <p>เข้าสู่ระบบสำหรับผู้ดูแล/ผู้สื่อข่าว</p>
+        </div>
+
+        <div id="google_button_container">
+            <div id="g_id_onload"
+                 data-client_id="YOUR_CLIENT_ID.apps.googleusercontent.com" 
+                 data-context="signin"
+                 data-ux_mode="popup"
+                 data-callback="handleCredentialResponse"
+                 data-auto_prompt="false">
+            </div>
+
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="outline"
+                 data-text="signin_with"
+                 data-size="large"
+                 data-logo_alignment="left">
+            </div>
+        </div>
+        
+        <div class="divider">หรือ</div>
+
+        <form class="login-form" action="/login" method="POST">
+            <div class="input-group">
+                <label for="email">อีเมล (Email)</label>
+                <input type="email" id="email" name="email" placeholder="ตัวอย่าง: name@suansri.ac.th" required>
+            </div>
+            
+            <div class="input-group">
+                <label for="password">รหัสผ่าน (Password)</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+            
+            <button type="submit" class="login-button">เข้าสู่ระบบด้วยอีเมล</button>
+            
+            <div class="forgot-password" style="margin-top: 15px; text-align: center;">
+                <a href="#">ลืมรหัสผ่าน?</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // ฟังก์ชันนี้จะถูกเรียกเมื่อผู้ใช้ Sign In สำเร็จ
+        function handleCredentialResponse(response) {
+            // response.credential คือ JWT (JSON Web Token) ที่มีข้อมูลผู้ใช้
+            console.log("Encoded JWT ID token: " + response.credential);
+            
+            // ในขั้นตอนนี้ คุณจะต้องส่ง JWT นี้ไปยังเซิร์ฟเวอร์ (Backend) ของคุณ
+            // เพื่อทำการตรวจสอบ (Verify) และยืนยันตัวตนของผู้ใช้
+            
+            // ตัวอย่าง: การส่งข้อมูลไปยังเซิร์ฟเวอร์
+            /*
+            fetch('/api/google-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ credential: response.credential })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/dashboard'; // นำไปยังหน้าหลัก
+                } else {
+                    alert('Login failed: ' + data.message);
+                }
+            });
+            */
+            
+            // สำหรับการทดสอบ คุณสามารถดูข้อมูลที่ถอดรหัสแล้วได้
+            const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            console.log("User Email:", payload.email);
+            console.log("User Name:", payload.name);
+            alert(`เข้าสู่ระบบสำเร็จด้วย: ${payload.email}`);
+        }
+    </script>
+</body>
+</html>
