@@ -3,29 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSW News Login with Google</title>
-    
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-
+    <title>SSW News Portal - Suansri Wittaya School</title>
     <style>
-        /* SSW Colors */
+        /* --- CSS STYLING: Global Variables & Base Styles --- */
         :root {
-            --ssw-green: #008000;
-            --ssw-yellow: #FFD700;
+            --ssw-green: #004d40; 
+            --ssw-yellow: #ffc107; 
+            --light-bg: #f4f4f4;
             --text-dark: #333;
             --text-light: #fff;
+            --border-color: #ccc;
             --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --danger-color: #dc3545; 
+            --info-color: #007bff; /* สีน้ำเงินสำหรับปุ่มโพสต์ */
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- LOGIN CONTAINER STYLES --- */
+        .login-page {
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
+            padding: 20px;
             box-sizing: border-box;
+            background-color: #f0f0f0; 
         }
 
         .login-container {
@@ -38,148 +48,560 @@
             text-align: center;
         }
 
-        .header {
-            margin-bottom: 30px;
-        }
+        .header { margin-bottom: 30px; }
+        .logo { width: 80px; height: 80px; margin-bottom: 10px; border-radius: 50%; }
+        .header h1 { color: var(--ssw-green); margin-top: 0; margin-bottom: 5px; font-size: 2em; }
+        .header p { color: var(--text-dark); font-size: 0.9em; font-weight: 300; }
 
-        .logo {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 10px;
-        }
-
-        .header h1 {
-            color: var(--ssw-green);
-            margin-top: 0;
-            margin-bottom: 5px;
-            font-size: 2em;
-        }
-
-        .header p {
-            color: var(--text-dark);
-            font-size: 0.9em;
-            font-weight: 300;
-        }
-
-        /* Styling for the divider line */
-        .divider {
+        /* Login Type Selection Buttons */
+        .login-type-selection {
             display: flex;
-            align-items: center;
-            text-align: center;
-            margin: 20px 0;
-            color: #aaa;
+            gap: 15px;
+            margin-bottom: 25px;
         }
-        .divider::before,
-        .divider::after {
-            content: '';
+        .login-type-selection button {
             flex: 1;
-            border-bottom: 1px solid #eee;
+            padding: 10px;
+            border: 2px solid var(--ssw-green);
+            background-color: var(--ssw-green);
+            color: var(--ssw-yellow);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s, opacity 0.3s;
         }
-        .divider:not(:empty)::before {
-            margin-right: .5em;
+        .login-type-selection button.inactive {
+            background-color: transparent;
+            color: var(--ssw-green);
+            border-color: #e0e0e0;
         }
-        .divider:not(:empty)::after {
-            margin-left: .5em;
+        .login-type-selection button:hover:not(.inactive) {
+            background-color: #00332a;
         }
 
-        /* --- Custom Email/Password Form (Optional) --- */
-        .input-group { margin-bottom: 20px; text-align: left; }
+        /* Form Styling */
+        .login-form-content { border-top: 1px solid #eee; padding-top: 20px; }
+        .input-group { margin-bottom: 20px; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text-dark); font-size: 0.95em; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 1em; }
-        .login-button { width: 100%; padding: 12px; background-color: var(--ssw-green); color: var(--ssw-yellow); border: none; border-radius: 6px; cursor: pointer; font-size: 1.1em; font-weight: bold; transition: background-color 0.3s; }
-        .login-button:hover { background-color: #006400; }
-        .forgot-password a { color: var(--ssw-green); text-decoration: none; font-size: 0.9em; }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-sizing: border-box; 
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--ssw-green); outline: none; box-shadow: 0 0 5px rgba(0, 77, 64, 0.3); }
 
-        /* Ensure Google button is centered */
-        #google_button_container {
-            display: flex;
-            justify-content: center;
+        /* Button Styling */
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--ssw-green); 
+            color: var(--ssw-yellow); 
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
             margin-top: 10px;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        .action-button:hover { background-color: #00332a; }
+        .action-button:active { transform: translateY(1px); }
+        .post-button { background-color: var(--info-color); color: white; margin-top: 0; }
+        .post-button:hover { background-color: #0056b3; }
+
+
+        /* --- NEWS CONTENT STYLES --- */
+        #news-content {
+            display: none; 
+        }
+
+        header {
+            background-color: var(--ssw-green);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 { margin: 0; font-size: 2.5em; letter-spacing: 2px; }
+        header p { margin: 5px 0 0; font-size: 1.1em; color: #b2dfdb; }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        /* Post Creation Form */
+        #post-creation-form {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            display: none; /* ซ่อนไว้ก่อน */
+        }
+        #post-creation-form h2 {
+            margin-top: 0;
+            color: var(--info-color);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-article {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .news-article h2 { color: var(--ssw-green); font-size: 1.5em; margin-top: 0; }
+        .news-article .date { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-size: 0.9em; 
+            color: #777; 
+        }
+        .news-article .author {
+            font-size: 0.8em;
+            color: var(--info-color);
+            margin-bottom: 10px;
+            display: block;
+            font-style: italic;
+        }
+        
+        .read-more-btn {
+            display: inline-block;
+            background-color: var(--ssw-yellow);
+            color: var(--ssw-green);
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        /* ปุ่มลบ */
+        .delete-btn {
+            background-color: var(--danger-color);
+            color: white;
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            float: right; 
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+        .delete-btn:hover { background-color: #c82333; }
+        
+        /* คลาสที่ควบคุมการแสดงปุ่มลบ (Admin vs User) */
+        .hide-delete-btn { display: none !important; }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            background-color: var(--ssw-green);
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="header">
-            <img src="path/to/school-logo.png" alt="Suansri Wittaya School Logo" class="logo">
-            <h1>SSW News Portal</h1>
-            <p>เข้าสู่ระบบสำหรับผู้ดูแล/ผู้สื่อข่าว</p>
+
+    <div id="login-page" class="login-page">
+        <div class="login-container">
+            <div class="header">
+                <img src="https://via.placeholder.com/80/004d40/ffc107?text=SSW" alt="Suansri Wittaya School Logo" class="logo">
+                <h1>SSW News Portal</h1>
+                <p id="login-status-message">กรุณาเลือกประเภทการเข้าสู่ระบบ</p>
+            </div>
+
+            <div class="login-type-selection">
+                <button id="user-btn" onclick="setLoginMode('user')">สมาชิกทั่วไป</button>
+                <button id="admin-btn" onclick="setLoginMode('admin')" class="inactive">ผู้ดูแล/นักข่าว</button>
+            </div>
+
+            <div class="login-form-content">
+                
+                <div id="instant-login-message">
+                    <p>ยินดีต้อนรับ! ระบบจำ IP ของผู้ดูแลได้ <span id="ip-display"></span></p>
+                    <button class="action-button" style="width: auto; padding: 8px 15px;" onclick="instantLogin()">เข้าสู่ระบบทันที</button>
+                    <button style="border: none; background: none; color: #555; text-decoration: underline; margin-left: 10px;" onclick="showAdminForm()">ไม่ใช่ฉัน</button>
+                </div>
+                
+                <form id="user-login-form">
+                    <p style="font-size: 1.1em; font-weight: bold; color: var(--ssw-green);">เข้าสู่ระบบเพื่ออ่านและโพสต์ข่าว</p>
+                    <div class="input-group">
+                        <label for="visitor-username">ชื่อผู้ใช้ (สำหรับโพสต์)</label>
+                        <input type="text" id="visitor-username" name="visitor-username" placeholder="ใส่ชื่อของคุณ" required>
+                    </div>
+                    <button type="submit" class="action-button">เข้าสู่ระบบ (User Access)</button>
+                </form>
+
+                <form id="admin-login-form" style="display: none;">
+                    <div class="input-group">
+                        <label for="admin-username">ชื่อผู้ใช้ (Admin/Reporter)</label>
+                        <input type="text" id="admin-username" name="admin-username" placeholder="Jocey778 หรือ sswadmin" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="admin-password">รหัสผ่าน (Password)</label>
+                        <input type="password" id="admin-password" name="admin-password" placeholder="••••••••" required>
+                    </div>
+                    
+                    <button type="submit" class="action-button">เข้าสู่ระบบผู้ดูแล</button>
+                </form>
+            </div>
         </div>
-
-        <div id="google_button_container">
-            <div id="g_id_onload"
-                 data-client_id="YOUR_CLIENT_ID.apps.googleusercontent.com" 
-                 data-context="signin"
-                 data-ux_mode="popup"
-                 data-callback="handleCredentialResponse"
-                 data-auto_prompt="false">
-            </div>
-
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-shape="rectangular"
-                 data-theme="outline"
-                 data-text="signin_with"
-                 data-size="large"
-                 data-logo_alignment="left">
-            </div>
-        </div>
-        
-        <div class="divider">หรือ</div>
-
-        <form class="login-form" action="/login" method="POST">
-            <div class="input-group">
-                <label for="email">อีเมล (Email)</label>
-                <input type="email" id="email" name="email" placeholder="ตัวอย่าง: name@suansri.ac.th" required>
-            </div>
-            
-            <div class="input-group">
-                <label for="password">รหัสผ่าน (Password)</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-            
-            <button type="submit" class="login-button">เข้าสู่ระบบด้วยอีเมล</button>
-            
-            <div class="forgot-password" style="margin-top: 15px; text-align: center;">
-                <a href="#">ลืมรหัสผ่าน?</a>
-            </div>
-        </form>
     </div>
 
+    <div id="news-content">
+        <header>
+            <h1>SSW News 📢</h1>
+            <p>Suansri Wittaya School Official News & Announcements</p>
+        </header>
+
+        <div class="container">
+             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <p style="margin: 0;">เข้าสู่ระบบในฐานะ: <strong id="logged-in-user-display"></strong></p>
+                <button class="read-more-btn" onclick="logout()" style="float: right;">ออกจากระบบ</button>
+             </div>
+            
+            <div id="post-creation-form">
+                <h2>สร้างบทความใหม่</h2>
+                <form id="new-post-form">
+                    <div class="input-group">
+                        <label for="post-title">หัวข้อข่าว</label>
+                        <input type="text" id="post-title" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="post-content">เนื้อหาข่าวโดยย่อ</label>
+                        <textarea id="post-content" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="action-button post-button">โพสต์ข่าว</button>
+                </form>
+            </div>
+
+            <div class="news-grid" id="news-grid">
+                </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Suansri Wittaya School. All Rights Reserved.</p>
+        </footer>
+    </div>
+
+
     <script>
-        // ฟังก์ชันนี้จะถูกเรียกเมื่อผู้ใช้ Sign In สำเร็จ
-        function handleCredentialResponse(response) {
-            // response.credential คือ JWT (JSON Web Token) ที่มีข้อมูลผู้ใช้
-            console.log("Encoded JWT ID token: " + response.credential);
-            
-            // ในขั้นตอนนี้ คุณจะต้องส่ง JWT นี้ไปยังเซิร์ฟเวอร์ (Backend) ของคุณ
-            // เพื่อทำการตรวจสอบ (Verify) และยืนยันตัวตนของผู้ใช้
-            
-            // ตัวอย่าง: การส่งข้อมูลไปยังเซิร์ฟเวอร์
-            /*
-            fetch('/api/google-login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ credential: response.credential })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = '/dashboard'; // นำไปยังหน้าหลัก
-                } else {
-                    alert('Login failed: ' + data.message);
-                }
-            });
-            */
-            
-            // สำหรับการทดสอบ คุณสามารถดูข้อมูลที่ถอดรหัสแล้วได้
-            const payload = JSON.parse(atob(response.credential.split('.')[1]));
-            console.log("User Email:", payload.email);
-            console.log("User Name:", payload.name);
-            alert(`เข้าสู่ระบบสำเร็จด้วย: ${payload.email}`);
+        // --- CONSTANTS AND ELEMENTS ---
+        const LOCAL_STORAGE_KEY = 'ssw_news_posts';
+        const ADMIN_IP_KEY = 'ssw_admin_ip';
+        const POSTS_CONTAINER = document.getElementById('news-grid');
+        const NEW_POST_FORM = document.getElementById('new-post-form');
+
+        const LOGIN_PAGE = document.getElementById('login-page');
+        const NEWS_CONTENT = document.getElementById('news-content');
+        const USER_FORM = document.getElementById('user-login-form');
+        const ADMIN_FORM = document.getElementById('admin-login-form');
+        const INSTANT_MESSAGE = document.getElementById('instant-login-message');
+        const IP_DISPLAY = document.getElementById('ip-display');
+        const STATUS_MESSAGE = document.getElementById('login-status-message');
+        const USER_BTN = document.getElementById('user-btn');
+        const ADMIN_BTN = document.getElementById('admin-btn');
+        const LOGGED_IN_USER_DISPLAY = document.getElementById('logged-in-user-display');
+        const POST_CREATION_FORM = document.getElementById('post-creation-form');
+
+        // Admin Accounts
+        const VALID_CREDENTIALS = {
+            'sswadmin': '1234',
+            'Jocey778': 'password'
+        };
+
+        // Current User State
+        let currentUser = { id: null, username: null, role: null };
+        let lastKnownPosts = '';
+        let refreshInterval;
+        
+        // Initialize Default Posts (only if localStorage is empty)
+        function initializeDefaultPosts() {
+            if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
+                const defaultPosts = [
+                    { id: Date.now() + 1, title: 'Outstanding Student Achievement in Science Fair', content: 'The SSW Science Club secured first place at the Regional Science & Technology Fair this past week. Kudos to the team for their innovative project on renewable energy!', date: 'November 13, 2025', authorId: 'admin_sswadmin', authorName: 'SSW Admin', role: 'admin' },
+                    { id: Date.now() + 2, title: 'Annual Sports Day Rescheduled', content: 'Due to unforeseen weather conditions, the Annual Sports Day has been moved to Friday, November 29th. Please check the school board for updated event schedules.', date: 'November 10, 2025', authorId: 'admin_Jocey778', authorName: 'Jocey778 (Reporter)', role: 'admin' },
+                    { id: Date.now() + 3, title: 'New Library Resource Center Opens', content: 'Students can now access our brand-new digital resource center in the main library building. It features 20 new workstations and high-speed internet.', date: 'November 5, 2025', authorId: 'user_visitor', authorName: 'Visitor', role: 'user' },
+                ];
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(defaultPosts));
+            }
         }
+        initializeDefaultPosts();
+
+        // --- CORE DATA FUNCTIONS ---
+
+        function getPosts() {
+            try {
+                return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+            } catch (e) {
+                console.error("Error parsing posts from localStorage:", e);
+                return [];
+            }
+        }
+
+        function savePosts(posts) {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(posts));
+            // Force re-render on save to simulate instant update on current screen
+            renderPosts(); 
+        }
+        
+        // --- REAL-TIME SIMULATION ---
+        
+        function startRealTimeCheck() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            refreshInterval = setInterval(renderPosts, 1000); // Check every 1 second
+            console.log("Real-time check started.");
+        }
+
+        function stopRealTimeCheck() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            console.log("Real-time check stopped.");
+        }
+
+        // --- RENDERING FUNCTIONS ---
+
+        function renderPosts() {
+            const posts = getPosts().sort((a, b) => b.id - a.id); // Sort newest first
+            const postsString = JSON.stringify(posts);
+
+            // Only re-render if data has actually changed
+            if (postsString === lastKnownPosts) return; 
+            lastKnownPosts = postsString;
+
+            let html = '';
+            
+            posts.forEach(post => {
+                // Determine if the delete button should be visible (Admin can delete all, User can delete own)
+                let showDeleteButton = false;
+                if (currentUser.role === 'admin') {
+                    showDeleteButton = true;
+                } else if (currentUser.role === 'user' && currentUser.id === post.authorId) {
+                    showDeleteButton = true;
+                }
+                
+                const deleteButtonHtml = showDeleteButton 
+                    ? `<button class="delete-btn" onclick="deleteArticle(${post.id})">ลบ X</button>`
+                    : '';
+                
+                const articleHtml = `
+                    <div class="news-article" id="article-${post.id}">
+                        ${deleteButtonHtml}
+                        <span class="date">${post.date}</span>
+                        <span class="author">โพสต์โดย: ${post.authorName}</span>
+                        <h2>${post.title}</h2>
+                        <p>${post.content}</p>
+                        <button class="read-more-btn" onclick="showArticleDetails('${post.title}')">Read More</button>
+                    </div>
+                `;
+                html += articleHtml;
+            });
+
+            POSTS_CONTAINER.innerHTML = html;
+        }
+
+
+        // --- ACTION HANDLERS ---
+        
+        // Handle Post Submission
+        NEW_POST_FORM.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            
+            if (!currentUser.id) {
+                alert("เกิดข้อผิดพลาด: ไม่พบ ID ผู้ใช้ กรุณาเข้าสู่ระบบใหม่");
+                return;
+            }
+
+            const newPost = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }),
+                authorId: currentUser.id,
+                authorName: currentUser.username,
+                role: currentUser.role
+            };
+
+            const posts = getPosts();
+            posts.push(newPost);
+            savePosts(posts); // Save posts and re-render
+            
+            NEW_POST_FORM.reset();
+            alert(`โพสต์ใหม่ "${title}" ถูกเผยแพร่แล้ว!`);
+        });
+        
+        // Handle Delete Article
+        window.deleteArticle = function(postId) {
+            const posts = getPosts();
+            const postIndex = posts.findIndex(p => p.id === postId);
+            
+            if (postIndex === -1) {
+                alert("ไม่พบบทความนี้");
+                return;
+            }
+            
+            const post = posts[postIndex];
+            
+            // Authorization Check
+            let authorized = false;
+            if (currentUser.role === 'admin') {
+                authorized = true; // Admin can delete any
+            } else if (currentUser.role === 'user' && currentUser.id === post.authorId) {
+                authorized = true; // User can only delete own posts
+            }
+            
+            if (!authorized) {
+                alert("คุณไม่มีสิทธิ์ลบบทความนี้");
+                return;
+            }
+
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบบทความ: "${post.title}"? (การกระทำนี้จะแสดงผลทันทีในทุกหน้าจอ)`)) {
+                posts.splice(postIndex, 1);
+                savePosts(posts);
+                alert(`บทความ "${post.title}" ถูกลบแล้ว`);
+            }
+        }
+        
+        // --- LOGIN/FLOW FUNCTIONS ---
+
+        async function getClientIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function showNewsContent(user) {
+            currentUser = user; // Set global user state
+            LOGIN_PAGE.style.display = 'none';
+            NEWS_CONTENT.style.display = 'block';
+            document.body.style.backgroundColor = 'var(--light-bg)';
+            LOGGED_IN_USER_DISPLAY.textContent = `${user.username} (${user.role === 'admin' ? 'ผู้ดูแล' : 'สมาชิก'})`;
+            POST_CREATION_FORM.style.display = 'block'; // Show post form for all logged-in users
+            
+            renderPosts(); // Initial render
+            startRealTimeCheck(); // Start continuous check for updates
+        }
+
+        function logout() {
+            stopRealTimeCheck();
+            alert('คุณออกจากระบบแล้ว');
+            currentUser = { id: null, username: null, role: null };
+            NEWS_CONTENT.style.display = 'none';
+            LOGIN_PAGE.style.display = 'flex';
+            setLoginMode('user');
+        }
+
+        function showArticleDetails(articleTitle) {
+            alert(`Viewing more details for: ${articleTitle}\n\n(ในเว็บไซต์จริง ปุ่มนี้จะเชื่อมโยงไปยังเรื่องข่าวฉบับเต็ม)`);
+        }
+        
+        function setLoginMode(mode) {
+            stopRealTimeCheck();
+            USER_BTN.classList.remove('inactive');
+            ADMIN_BTN.classList.remove('inactive');
+            
+            USER_FORM.style.display = 'none';
+            ADMIN_FORM.style.display = 'none';
+            INSTANT_MESSAGE.style.display = 'none';
+
+            if (mode === 'user') {
+                ADMIN_BTN.classList.add('inactive');
+                STATUS_MESSAGE.textContent = 'เข้าสู่ระบบในฐานะสมาชิกทั่วไป';
+                USER_FORM.style.display = 'block';
+            } else if (mode === 'admin') {
+                USER_BTN.classList.add('inactive');
+                STATUS_MESSAGE.textContent = 'เข้าสู่ระบบในฐานะผู้ดูแล/นักข่าว';
+                checkInstantLogin(); 
+            }
+        }
+
+        function showAdminForm() {
+            INSTANT_MESSAGE.style.display = 'none';
+            ADMIN_FORM.style.display = 'block';
+        }
+
+        async function checkInstantLogin() {
+            const storedIP = localStorage.getItem(ADMIN_IP_KEY);
+            const currentIP = await getClientIP();
+            
+            if (storedIP && currentIP && storedIP === currentIP) {
+                ADMIN_FORM.style.display = 'none';
+                IP_DISPLAY.textContent = `(${currentIP})`;
+                INSTANT_MESSAGE.style.display = 'block';
+            } else {
+                showAdminForm();
+            }
+        }
+
+        function instantLogin() {
+            // Find a default admin user for instant login
+            const defaultAdminUsername = Object.keys(VALID_CREDENTIALS)[0]; 
+            showNewsContent({ 
+                id: `admin_${defaultAdminUsername}`, 
+                username: defaultAdminUsername, 
+                role: 'admin' 
+            });
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // 1. Handle User Login (Visitor Access)
+        USER_FORM.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('visitor-username').value;
+            showNewsContent({ id: `user_${username}`, username: username, role: 'user' });
+        });
+
+        // 2. Handle Admin Login (Credential Check)
+        ADMIN_FORM.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+
+            if (VALID_CREDENTIALS[username] === password) { 
+                const currentIP = await getClientIP();
+                if (currentIP) {
+                    localStorage.setItem(ADMIN_IP_KEY, currentIP);
+                } 
+                showNewsContent({ id: `admin_${username}`, username: username, role: 'admin' });
+            } else {
+                 alert('ชื่อผู้ใช้หรือรหัสผ่านผู้ดูแลไม่ถูกต้อง (บัญชีสำหรับทดสอบ: sswadmin/1234 หรือ Jocey778/password)');
+            }
+        });
+
+        // Run default mode check when the page loads
+        setLoginMode('user'); 
     </script>
 </body>
 </html>
