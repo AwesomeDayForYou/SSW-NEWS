@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSW News Portal - Suansri Wittaya School</title>
+    <title>SSW News Portal - Suansri Wittaya School (Forum Style)</title>
     <style>
         /* --- CSS STYLING: Global Variables & Base Styles --- */
         :root {
@@ -15,7 +15,8 @@
             --border-color: #ccc;
             --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             --danger-color: #dc3545; 
-            --info-color: #007bff; /* สีน้ำเงินสำหรับปุ่มโพสต์ */
+            --info-color: #007bff;
+            --comment-bg: #f8f8f8; /* สีพื้นหลัง Comment */
         }
 
         body {
@@ -27,7 +28,7 @@
             line-height: 1.6;
         }
 
-        /* --- LOGIN CONTAINER STYLES --- */
+        /* --- LOGIN & HEADER STYLES (Keep the same) --- */
         .login-page {
             display: flex;
             justify-content: center;
@@ -53,33 +54,10 @@
         .header h1 { color: var(--ssw-green); margin-top: 0; margin-bottom: 5px; font-size: 2em; }
         .header p { color: var(--text-dark); font-size: 0.9em; font-weight: 300; }
 
-        /* Login Type Selection Buttons */
-        .login-type-selection {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        .login-type-selection button {
-            flex: 1;
-            padding: 10px;
-            border: 2px solid var(--ssw-green);
-            background-color: var(--ssw-green);
-            color: var(--ssw-yellow);
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s, opacity 0.3s;
-        }
-        .login-type-selection button.inactive {
-            background-color: transparent;
-            color: var(--ssw-green);
-            border-color: #e0e0e0;
-        }
-        .login-type-selection button:hover:not(.inactive) {
-            background-color: #00332a;
-        }
-
-        /* Form Styling */
+        .login-type-selection { display: flex; gap: 15px; margin-bottom: 25px; }
+        .login-type-selection button { flex: 1; padding: 10px; border: 2px solid var(--ssw-green); background-color: var(--ssw-green); color: var(--ssw-yellow); border-radius: 6px; cursor: pointer; font-weight: bold; transition: background-color 0.3s, opacity 0.3s; }
+        .login-type-selection button.inactive { background-color: transparent; color: var(--ssw-green); border-color: #e0e0e0; }
+        
         .login-form-content { border-top: 1px solid #eee; padding-top: 20px; }
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text-dark); font-size: 0.95em; }
@@ -92,9 +70,6 @@
             font-size: 1em;
             transition: border-color 0.3s;
         }
-        .input-group input:focus, .input-group textarea:focus { border-color: var(--ssw-green); outline: none; box-shadow: 0 0 5px rgba(0, 77, 64, 0.3); }
-
-        /* Button Styling */
         .action-button {
             width: 100%;
             padding: 12px;
@@ -108,47 +83,21 @@
             margin-top: 10px;
             transition: background-color 0.3s, transform 0.1s;
         }
-        .action-button:hover { background-color: #00332a; }
-        .action-button:active { transform: translateY(1px); }
         .post-button { background-color: var(--info-color); color: white; margin-top: 0; }
         .post-button:hover { background-color: #0056b3; }
 
-
         /* --- NEWS CONTENT STYLES --- */
-        #news-content {
-            display: none; 
-        }
-
-        header {
-            background-color: var(--ssw-green);
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 { margin: 0; font-size: 2.5em; letter-spacing: 2px; }
-        header p { margin: 5px 0 0; font-size: 1.1em; color: #b2dfdb; }
-
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 10px;
-        }
-
-        /* Post Creation Form */
+        #news-content { display: none; }
+        header { background-color: var(--ssw-green); color: white; padding: 20px 0; text-align: center; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .container { width: 90%; max-width: 1200px; margin: 20px auto; padding: 0 10px; }
+        
         #post-creation-form {
             background: white;
             padding: 20px;
             margin-bottom: 20px;
             border-radius: 8px;
             box-shadow: var(--shadow);
-            display: none; /* ซ่อนไว้ก่อน */
-        }
-        #post-creation-form h2 {
-            margin-top: 0;
-            color: var(--info-color);
+            display: none;
         }
 
         .news-grid {
@@ -167,35 +116,7 @@
         }
 
         .news-article h2 { color: var(--ssw-green); font-size: 1.5em; margin-top: 0; }
-        .news-article .date { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-size: 0.9em; 
-            color: #777; 
-        }
-        .news-article .author {
-            font-size: 0.8em;
-            color: var(--info-color);
-            margin-bottom: 10px;
-            display: block;
-            font-style: italic;
-        }
-        
-        .read-more-btn {
-            display: inline-block;
-            background-color: var(--ssw-yellow);
-            color: var(--ssw-green);
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.3s;
-            margin-right: 10px;
-        }
-
-        /* ปุ่มลบ */
+        .news-article .author { font-size: 0.8em; color: var(--info-color); margin-bottom: 10px; display: block; font-style: italic; }
         .delete-btn {
             background-color: var(--danger-color);
             color: white;
@@ -209,17 +130,79 @@
             font-size: 0.9em;
             margin-left: 10px;
         }
-        .delete-btn:hover { background-color: #c82333; }
-        
-        /* คลาสที่ควบคุมการแสดงปุ่มลบ (Admin vs User) */
-        .hide-delete-btn { display: none !important; }
+        .read-more-btn { display: none; } 
 
-        footer {
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 30px;
-            background-color: var(--ssw-green);
+        /* --- COMMENT SECTION STYLES (NEW) --- */
+        .comment-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .comment-container {
+            border-left: 3px solid var(--ssw-yellow);
+            padding-left: 10px;
+            margin-top: 10px;
+            max-height: 0; /* ซ่อน Comment เริ่มต้น */
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .comment-container.open {
+            max-height: 5000px; /* ขยายเมื่อเปิด */
+            transition: max-height 1s ease-in;
+        }
+
+        .single-comment {
+            background-color: var(--comment-bg);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .comment-meta {
+            font-weight: bold;
+            color: var(--ssw-green);
+            margin-right: 10px;
+        }
+        .comment-date {
+            font-size: 0.8em;
+            color: #999;
+            font-weight: normal;
+        }
+        .comment-content {
+            margin-top: 4px;
+        }
+
+        /* Comment Form */
+        .comment-form textarea {
+            resize: none;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        .comment-form button {
+            width: auto;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            background-color: var(--info-color);
             color: white;
+            margin-top: 5px;
+        }
+
+        /* Toggle Button */
+        .comment-toggle-btn {
+            background-color: transparent;
+            border: 1px solid var(--info-color);
+            color: var(--info-color);
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.9em;
+            transition: background-color 0.3s;
+        }
+        .comment-toggle-btn:hover {
+            background-color: rgba(0, 123, 255, 0.1);
         }
     </style>
 </head>
@@ -239,7 +222,6 @@
             </div>
 
             <div class="login-form-content">
-                
                 <div id="instant-login-message">
                     <p>ยินดีต้อนรับ! ระบบจำ IP ของผู้ดูแลได้ <span id="ip-display"></span></p>
                     <button class="action-button" style="width: auto; padding: 8px 15px;" onclick="instantLogin()">เข้าสู่ระบบทันที</button>
@@ -275,7 +257,7 @@
     <div id="news-content">
         <header>
             <h1>SSW News 📢</h1>
-            <p>Suansri Wittaya School Official News & Announcements</p>
+            <p>Suansri Wittaya School Official News & Announcements (Forum Style)</p>
         </header>
 
         <div class="container">
@@ -285,17 +267,17 @@
              </div>
             
             <div id="post-creation-form">
-                <h2>สร้างบทความใหม่</h2>
+                <h2>สร้างกระทู้ข่าวใหม่</h2>
                 <form id="new-post-form">
                     <div class="input-group">
-                        <label for="post-title">หัวข้อข่าว</label>
+                        <label for="post-title">หัวข้อกระทู้</label>
                         <input type="text" id="post-title" required>
                     </div>
                     <div class="input-group">
-                        <label for="post-content">เนื้อหาข่าวโดยย่อ</label>
+                        <label for="post-content">เนื้อหาเริ่มต้น/รายละเอียด</label>
                         <textarea id="post-content" rows="3" required></textarea>
                     </div>
-                    <button type="submit" class="action-button post-button">โพสต์ข่าว</button>
+                    <button type="submit" class="action-button post-button">ตั้งกระทู้</button>
                 </form>
             </div>
 
@@ -310,12 +292,16 @@
 
 
     <script>
+        // ***************************************************************
+        //  ✅ อัปเดตค่า API BASE URL แล้ว: เชื่อมต่อไปยัง Cloud Run Endpoint ของคุณ
+        // ***************************************************************
+        const API_BASE_URL = 'https://ssw-news-api-170685138785.europe-west1.run.app/api'; 
+        // ***************************************************************
+
         // --- CONSTANTS AND ELEMENTS ---
-        const LOCAL_STORAGE_KEY = 'ssw_news_posts';
         const ADMIN_IP_KEY = 'ssw_admin_ip';
         const POSTS_CONTAINER = document.getElementById('news-grid');
         const NEW_POST_FORM = document.getElementById('new-post-form');
-
         const LOGIN_PAGE = document.getElementById('login-page');
         const NEWS_CONTENT = document.getElementById('news-content');
         const USER_FORM = document.getElementById('user-login-form');
@@ -338,35 +324,21 @@
         let currentUser = { id: null, username: null, role: null };
         let lastKnownPosts = '';
         let refreshInterval;
-        
-        // Initialize Default Posts (only if localStorage is empty)
-        function initializeDefaultPosts() {
-            if (!localStorage.getItem(LOCAL_STORAGE_KEY)) {
-                const defaultPosts = [
-                    { id: Date.now() + 1, title: 'Outstanding Student Achievement in Science Fair', content: 'The SSW Science Club secured first place at the Regional Science & Technology Fair this past week. Kudos to the team for their innovative project on renewable energy!', date: 'November 13, 2025', authorId: 'admin_sswadmin', authorName: 'SSW Admin', role: 'admin' },
-                    { id: Date.now() + 2, title: 'Annual Sports Day Rescheduled', content: 'Due to unforeseen weather conditions, the Annual Sports Day has been moved to Friday, November 29th. Please check the school board for updated event schedules.', date: 'November 10, 2025', authorId: 'admin_Jocey778', authorName: 'Jocey778 (Reporter)', role: 'admin' },
-                    { id: Date.now() + 3, title: 'New Library Resource Center Opens', content: 'Students can now access our brand-new digital resource center in the main library building. It features 20 new workstations and high-speed internet.', date: 'November 5, 2025', authorId: 'user_visitor', authorName: 'Visitor', role: 'user' },
-                ];
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(defaultPosts));
-            }
-        }
-        initializeDefaultPosts();
 
-        // --- CORE DATA FUNCTIONS ---
+        // --- CORE DATA FUNCTIONS (API Version) ---
 
-        function getPosts() {
+        async function getPosts() {
             try {
-                return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || [];
+                const response = await fetch(`${API_BASE_URL}/posts`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const data = await response.json();
+                return data; 
             } catch (e) {
-                console.error("Error parsing posts from localStorage:", e);
+                console.error("Error fetching posts from API:", e);
+                // อาจจะต้องเปลี่ยนข้อความ Alert ถ้าคุณรู้ว่าปัญหาเกิดจาก CORS หรือ SQL
+                // alert("ไม่สามารถดึงข้อมูลกระทู้ได้! โปรดตรวจสอบว่า Cloud Run Service ทำงานอยู่หรือไม่");
                 return [];
             }
-        }
-
-        function savePosts(posts) {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(posts));
-            // Force re-render on save to simulate instant update on current screen
-            renderPosts(); 
         }
         
         // --- REAL-TIME SIMULATION ---
@@ -383,23 +355,49 @@
         }
 
         // --- RENDERING FUNCTIONS ---
+        
+        function renderComments(postId, comments) {
+            let commentHtml = (comments || []).map(comment => `
+                <div class="single-comment">
+                    <span class="comment-meta">${comment.author_name || comment.authorName}</span>
+                    <span class="comment-date">@ ${comment.created_at || comment.date}</span>
+                    <div class="comment-content">${comment.content}</div>
+                </div>
+            `).join('');
 
-        function renderPosts() {
-            const posts = getPosts().sort((a, b) => b.id - a.id); // Sort newest first
+            return `
+                <div class="comment-section">
+                    <button class="comment-toggle-btn" onclick="toggleComments(${postId})">
+                        ${(comments || []).length} ความคิดเห็น (คลิกเพื่อ ${comments && comments.length > 0 ? 'ซ่อน/แสดง' : 'แสดง'})
+                    </button>
+                    <div id="comments-${postId}" class="comment-container">
+                        ${commentHtml}
+                        <form class="comment-form" onsubmit="handleCommentSubmit(event, ${postId})">
+                            <textarea placeholder="แสดงความคิดเห็น..." required></textarea>
+                            <button type="submit">ตอบกลับ</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function renderPosts() {
+            const posts = await getPosts(); 
+            
             const postsString = JSON.stringify(posts);
 
-            // Only re-render if data has actually changed
             if (postsString === lastKnownPosts) return; 
             lastKnownPosts = postsString;
 
             let html = '';
             
             posts.forEach(post => {
-                // Determine if the delete button should be visible (Admin can delete all, User can delete own)
                 let showDeleteButton = false;
+                const postAuthorId = post.author_id; 
+                
                 if (currentUser.role === 'admin') {
                     showDeleteButton = true;
-                } else if (currentUser.role === 'user' && currentUser.id === post.authorId) {
+                } else if (currentUser.role === 'user' && currentUser.id === postAuthorId) {
                     showDeleteButton = true;
                 }
                 
@@ -407,14 +405,16 @@
                     ? `<button class="delete-btn" onclick="deleteArticle(${post.id})">ลบ X</button>`
                     : '';
                 
+                const commentsHtml = renderComments(post.id, post.comments || []);
+                
                 const articleHtml = `
                     <div class="news-article" id="article-${post.id}">
                         ${deleteButtonHtml}
-                        <span class="date">${post.date}</span>
-                        <span class="author">โพสต์โดย: ${post.authorName}</span>
+                        <span class="date">${post.created_at}</span>
+                        <span class="author">โพสต์โดย: ${post.author_name}</span>
                         <h2>${post.title}</h2>
                         <p>${post.content}</p>
-                        <button class="read-more-btn" onclick="showArticleDetails('${post.title}')">Read More</button>
+                        ${commentsHtml}
                     </div>
                 `;
                 html += articleHtml;
@@ -424,10 +424,9 @@
         }
 
 
-        // --- ACTION HANDLERS ---
+        // --- ACTION HANDLERS: POSTS (API Version) ---
         
-        // Handle Post Submission
-        NEW_POST_FORM.addEventListener('submit', function(e) {
+        NEW_POST_FORM.addEventListener('submit', async function(e) { 
             e.preventDefault();
             
             const title = document.getElementById('post-title').value;
@@ -438,53 +437,116 @@
                 return;
             }
 
-            const newPost = {
-                id: Date.now(),
+            const postData = {
                 title: title,
                 content: content,
-                date: new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }),
-                authorId: currentUser.id,
                 authorName: currentUser.username,
                 role: currentUser.role
             };
 
-            const posts = getPosts();
-            posts.push(newPost);
-            savePosts(posts); // Save posts and re-render
-            
-            NEW_POST_FORM.reset();
-            alert(`โพสต์ใหม่ "${title}" ถูกเผยแพร่แล้ว!`);
+            try {
+                const response = await fetch(`${API_BASE_URL}/posts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData)
+                });
+
+                if (response.ok) {
+                    NEW_POST_FORM.reset();
+                    alert(`กระทู้ใหม่ "${title}" ถูกเผยแพร่แล้ว! (บันทึกใน SQL)`);
+                    renderPosts(); 
+                } else {
+                    const error = await response.json();
+                    alert(`ไม่สามารถสร้างกระทู้ได้: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Server (POST)');
+            }
         });
         
-        // Handle Delete Article
-        window.deleteArticle = function(postId) {
-            const posts = getPosts();
-            const postIndex = posts.findIndex(p => p.id === postId);
+        window.deleteArticle = async function(postId) { 
+            const posts = await getPosts();
+            const post = posts.find(p => p.id === postId); // ใช้ p.id จาก API response
             
-            if (postIndex === -1) {
-                alert("ไม่พบบทความนี้");
-                return;
-            }
-            
-            const post = posts[postIndex];
-            
-            // Authorization Check
-            let authorized = false;
-            if (currentUser.role === 'admin') {
-                authorized = true; // Admin can delete any
-            } else if (currentUser.role === 'user' && currentUser.id === post.authorId) {
-                authorized = true; // User can only delete own posts
-            }
-            
+            if (!post) return alert("ไม่พบบทความนี้");
+
+            const postAuthorId = post.author_id;
+            let authorized = (currentUser.role === 'admin' || (currentUser.role === 'user' && currentUser.id === postAuthorId));
+
             if (!authorized) {
                 alert("คุณไม่มีสิทธิ์ลบบทความนี้");
                 return;
             }
 
-            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบบทความ: "${post.title}"? (การกระทำนี้จะแสดงผลทันทีในทุกหน้าจอ)`)) {
-                posts.splice(postIndex, 1);
-                savePosts(posts);
-                alert(`บทความ "${post.title}" ถูกลบแล้ว`);
+            if (confirm(`คุณแน่ใจหรือไม่ที่จะลบกระทู้: "${post.title}" และความคิดเห็นทั้งหมด?`)) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/posts/${postId}`, {
+                        method: 'DELETE',
+                    });
+                    
+                    if (response.ok) {
+                        alert(`กระทู้ "${post.title}" ถูกลบออกจากทุกคนแล้ว`);
+                        renderPosts();
+                    } else {
+                        const error = await response.json();
+                        alert(`เกิดข้อผิดพลาดในการลบ: ${error.message}`);
+                    }
+                } catch (error) {
+                    console.error('API Error:', error);
+                    alert('ไม่สามารถติดต่อ Server ได้ (DELETE)');
+                }
+            }
+        }
+        
+        // --- ACTION HANDLERS: COMMENTS (API Version) ---
+        
+        window.toggleComments = function(postId) {
+            const commentContainer = document.getElementById(`comments-${postId}`);
+            if (commentContainer) {
+                commentContainer.classList.toggle('open');
+            }
+        }
+        
+        window.handleCommentSubmit = async function(e, postId) { 
+            e.preventDefault();
+            
+            const form = e.target;
+            const textarea = form.querySelector('textarea');
+            const commentContent = textarea.value.trim();
+
+            if (!commentContent || !currentUser.id) return;
+
+            const commentData = {
+                authorName: currentUser.username,
+                content: commentContent,
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/posts/${postId}/comments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(commentData)
+                });
+
+                if (response.ok) {
+                    textarea.value = ''; 
+                    renderPosts(); 
+                    
+                    setTimeout(() => {
+                        const commentContainer = document.getElementById(`comments-${postId}`);
+                        if (commentContainer && !commentContainer.classList.contains('open')) {
+                            commentContainer.classList.add('open');
+                        }
+                    }, 100);
+
+                } else {
+                    const error = await response.json();
+                    alert(`ไม่สามารถโพสต์ความคิดเห็นได้: ${error.message}`);
+                }
+            } catch (error) {
+                console.error('API Error:', error);
+                alert('เกิดข้อผิดพลาดในการเชื่อมต่อ Server (POST Comment)');
             }
         }
         
@@ -501,15 +563,15 @@
         }
 
         function showNewsContent(user) {
-            currentUser = user; // Set global user state
+            currentUser = user; 
             LOGIN_PAGE.style.display = 'none';
             NEWS_CONTENT.style.display = 'block';
             document.body.style.backgroundColor = 'var(--light-bg)';
             LOGGED_IN_USER_DISPLAY.textContent = `${user.username} (${user.role === 'admin' ? 'ผู้ดูแล' : 'สมาชิก'})`;
-            POST_CREATION_FORM.style.display = 'block'; // Show post form for all logged-in users
+            POST_CREATION_FORM.style.display = 'block'; 
             
-            renderPosts(); // Initial render
-            startRealTimeCheck(); // Start continuous check for updates
+            renderPosts(); 
+            startRealTimeCheck(); 
         }
 
         function logout() {
@@ -521,10 +583,6 @@
             setLoginMode('user');
         }
 
-        function showArticleDetails(articleTitle) {
-            alert(`Viewing more details for: ${articleTitle}\n\n(ในเว็บไซต์จริง ปุ่มนี้จะเชื่อมโยงไปยังเรื่องข่าวฉบับเต็ม)`);
-        }
-        
         function setLoginMode(mode) {
             stopRealTimeCheck();
             USER_BTN.classList.remove('inactive');
@@ -564,7 +622,6 @@
         }
 
         function instantLogin() {
-            // Find a default admin user for instant login
             const defaultAdminUsername = Object.keys(VALID_CREDENTIALS)[0]; 
             showNewsContent({ 
                 id: `admin_${defaultAdminUsername}`, 
@@ -575,14 +632,13 @@
 
         // --- EVENT LISTENERS ---
 
-        // 1. Handle User Login (Visitor Access)
         USER_FORM.addEventListener('submit', function(e) {
             e.preventDefault();
             const username = document.getElementById('visitor-username').value;
-            showNewsContent({ id: `user_${username}`, username: username, role: 'user' });
+            // ID ใน Frontend ใช้เพื่อตรวจสอบสิทธิ์การลบ (authorId ใน SQL)
+            showNewsContent({ id: `user_${username}`, username: username, role: 'user' }); 
         });
 
-        // 2. Handle Admin Login (Credential Check)
         ADMIN_FORM.addEventListener('submit', async function(e) {
             e.preventDefault();
             
